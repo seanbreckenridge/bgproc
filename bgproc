@@ -8,6 +8,7 @@
 ##### SETUP #####
 
 # cd to this dir
+declare THIS_DIR
 THIS_DIR="$(dirname "${BASH_SOURCE[0]}")"
 cd "$THIS_DIR" || exit $?
 
