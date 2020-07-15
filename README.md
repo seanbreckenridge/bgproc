@@ -11,4 +11,4 @@ Uses:
 
 This also runs any other `bash` scripts in this directory that end with `.job`
 
-To daemonize this, I run this at the beginning of my X session. Can also run kill/restart it with `pkill bgproc`/`setsid ./bgproc`
+To daemonize this, I run this at the beginning of my X session. Can also run (kill/restart) it with `pkill bgproc`/`setsid ./bgproc`
