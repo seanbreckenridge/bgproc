@@ -1,6 +1,6 @@
 # bgproc
 
-A basic bash loop to run things in the background. Used as a cron alternative.
+A bash loop to run tasks in the background. Used as a cron alternative.
 
 Uses a lock file at `/tmp/bgproc.lock` to make sure duplicates aren't running, though it wouldn't make a huge difference since commands are run behind `evry` anyways.
 
