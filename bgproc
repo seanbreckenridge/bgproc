@@ -1,0 +1,68 @@
+#!/bin/bash
+# a basic bash loop to run things in the background
+# uses my evry tool to run commands periodically
+# https://github.com/seanbreckenridge/evry
+# also runs any other bash scripts in this directory
+# that end with .job
+
+##### SETUP #####
+
+# cd to this dir
+THIS_DIR="$(dirname "${BASH_SOURCE[0]}")"
+cd "$THIS_DIR" || exit $?
+
+declare -rx LOCKFILE='/tmp/bgproc.lock'
+declare -rx LOGFILE='/tmp/bgproc.log'
+
+# make sure commands exist
+export HAVECMD_REPORT=1
+
+declare -a required_binaries
+required_binaries=(wait-for-internet evry)
+for binary in "${required_binaries[@]}"; do
+	havecmd "$binary" || exit $?
+done
+
+##### OUT/ERR LOGGING FUNCTIONS #####
+
+# print a log and append to logfile
+printlog() {
+	printf "$(date +%s):%s\n" "$1" | tee -a "$LOGFILE"
+} && export -f printlog
+
+# send an error and a notification
+send-error() {
+	printf '%s:error:%s\n' "$(date +%s)" "$1" >>"$LOGFILE"
+	printf '%s\n' "$1" >&2
+	notify-send "bgproc error" "$1"
+} && export -f send-error
+
+##### LOCKFILE #####
+
+# exit if lock file already exists
+if [[ -e "$LOCKFILE" ]]; then
+	send-error "Lockfile at ${LOCKFILE} already exists..."
+	exit 1
+fi
+
+# delete lockfile when on exit
+cleanup() {
+	rm "$LOCKFILE"
+}
+trap cleanup EXIT
+
+# create lockfile
+touch "$LOCKFILE"
+
+##### MAIN LOOP #####
+
+# main loop
+printlog "Starting loop..."
+while true; do
+	wait-for-internet >/dev/null 2>&1
+	# run any other jobs in this directory
+	for script in ./*.job; do
+		bash "$script"
+	done
+	sleep 60
+done
