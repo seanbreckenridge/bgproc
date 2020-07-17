@@ -9,6 +9,6 @@ Uses:
   * [wait-for-internet](https://github.com/seanbreckenridge/wait-for-internet) to make sure the computer has a remote connection before running jobs
   * basic [havecmd](https://sean.fish/d/havecmd?dark) script to test if commands exist
 
-This also runs any other `bash` scripts in this directory that end with `.job`
+This also runs any other `bash` scripts in this directory that end with `.job`. Any script that ends with `.priv.job` isn't sycned to git.
 
 To daemonize this, I run this at the beginning of my X session. Can also run (kill/restart) it with `pkill bgproc`/`setsid ./bgproc`
