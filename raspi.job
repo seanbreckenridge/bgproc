@@ -1,7 +1,6 @@
 #!/bin/bash
 readonly backup_script="$REPOS/raspi-backup/backup"
 evry 6 hours -raspibackup && {
-	notify "raspi-backup" "Backing up system..."
 	printlog 'raspi-backup:starting backup...'
 	"$backup_script" >>/tmp/raspi_backup.log 2>&1
 }
