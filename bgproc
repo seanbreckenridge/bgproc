@@ -65,5 +65,5 @@ while true; do
 	for script in ./*.job; do
 		bash "$script"
 	done
-	sleep 60
+	sleep 5m
 done
