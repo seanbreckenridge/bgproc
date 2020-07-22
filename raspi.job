@@ -2,5 +2,8 @@
 readonly backup_script="$REPOS/raspi-backup/backup"
 evry 6 hours -raspibackup && {
 	printlog 'raspi-backup:starting backup...'
-	"$backup_script" >>/tmp/raspi_backup.log 2>&1
+	"$backup_script" >>/tmp/raspi_backup.log 2>&1 || {
+		evry rollback -raspibackup
+		send-error "Could not backup system. See /tmp/raspi_backup.log for more info"
+	}
 }
