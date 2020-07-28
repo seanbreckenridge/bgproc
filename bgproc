@@ -62,8 +62,8 @@ printlog "Starting loop..."
 while true; do
 	wait-for-internet >/dev/null 2>&1
 	# run any other jobs in this directory
-	for script in ./*.job; do
+	while read -r -d $'\0' script; do
 		bash "$script"
-	done
+	done < <(find . -type f -name "*.job" -print0)
 	sleep 5m
 done
