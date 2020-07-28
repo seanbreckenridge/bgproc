@@ -35,7 +35,7 @@ printlog() {
 send-error() {
 	printf '%s:error:%s\n' "$(date +%s)" "$1" >>"$LOGFILE"
 	printf '%s\n' "$1" >&2
-	notify-send -u critical "bgproc error" "$1"
+	HAVECMD_REPORT='' havecmd notify-send && notify-send -u critical "bgproc error" "$1"
 } && export -f send-error
 
 ##### LOCKFILE #####
