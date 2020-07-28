@@ -11,4 +11,4 @@ Uses:
 
 This also runs any other `bash` scripts in this directory that end with `.job`. Any script that ends with `.priv.job` isn't sycned to git.
 
-To daemonize this, I run this at the beginning of my X session. Can also run (kill/restart) it with `pkill bgproc`/`setsid ./bgproc`
+To daemonize this, I run this at the beginning of my X session. Can also run (kill/restart) it with `pkill -x bgproc`/`setsid ./bgproc`
