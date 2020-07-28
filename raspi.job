@@ -5,5 +5,7 @@ evry 6 hours -raspibackup && {
 	"$backup_script" >>/tmp/raspi_backup.log 2>&1 || {
 		evry rollback -raspibackup
 		"$REPOS/raspi-backup/findpi-ip" && send-error "Could not backup system. See /tmp/raspi_backup.log for more info"
+		exit 1
 	}
+	printlog "raspi-backup:finished backup: $(date)"
 }
