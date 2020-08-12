@@ -65,5 +65,5 @@ while true; do
 	while read -r -d $'\0' script; do
 		bash "$script"
 	done < <(find . -type f -name "*.job" -print0)
-	sleep 5m
+	sleep 1m
 done
