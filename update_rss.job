@@ -1,0 +1,10 @@
+#!/bin/sh
+# update rss feeds on my computer
+# sean.fish/d/update-rss
+evry -updaterss 10 minutes && {
+	if update-rss; then
+		printlog "updaterss:updated RSS feeds:$(cat ~/.cache/rss-unread)"
+	else
+		printlog "updaterss:failed to update RSS feeds"
+	fi
+}
