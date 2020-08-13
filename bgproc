@@ -14,7 +14,7 @@ havecmd() {
 		printf 'Could not find %s on your $PATH\n' "$1" >&2
 		return 1
 	fi
-}
+} && export -f havecmd
 
 ##### SETUP #####
 
