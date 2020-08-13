@@ -1,5 +1,7 @@
 tags*
 *.pdf
+*.log
 
 # private jobs
 *.priv.job
+

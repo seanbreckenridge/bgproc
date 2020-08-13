@@ -1,52 +1,59 @@
 #!/bin/bash
-# a basic bash loop to run things in the background
+# a bash loop to run things in the background
 # uses my evry tool to run commands periodically
 # https://github.com/seanbreckenridge/evry
 # also runs any other bash scripts in this directory
 # that end with .job
 
+# Function to test if a command is on the users $PATH
+# i.e. if they have a binary/script installed
+havecmd() {
+	if command -v "$1" >/dev/null 2>&1; then
+		return 0
+	else
+		printf 'Could not find %s on your $PATH\n' "$1" >&2
+		return 1
+	fi
+}
+
 ##### SETUP #####
 
-# cd to this dir
-declare THIS_DIR
-THIS_DIR="$(dirname "${BASH_SOURCE[0]}")"
-cd "$THIS_DIR" || exit $?
-
 declare -rx LOCKFILE='/tmp/bgproc.lock'
-declare -rx LOGFILE='/tmp/bgproc.log'
-
-# make sure commands exist
-export HAVECMD_REPORT=1
+declare -rx LOGFILE="${BGPROC_LOGFILE:-/tmp/bgproc.log}"
 
 declare -a required_binaries
-required_binaries=(wait-for-internet evry)
+required_binaries=('wait-for-internet' 'evry')
 for binary in "${required_binaries[@]}"; do
 	havecmd "$binary" || exit $?
 done
 
 ##### OUT/ERR LOGGING FUNCTIONS #####
 
-# print a log and append to logfile
+# both of these accept one argument, which is the message to print
+
+# print a log to STDOUT and append to logfile
 printlog() {
 	printf "$(date +%s):%s\n" "$1" | tee -a "$LOGFILE"
 } && export -f printlog
 
-# send an error and a notification
+# print a log to to STDERR, and append to the logfile
+# if notify-send (to send a notification on linux) is
+# avaiable, also sends a notification
 send-error() {
 	printf '%s:error:%s\n' "$(date +%s)" "$1" >>"$LOGFILE"
 	printf '%s\n' "$1" >&2
-	HAVECMD_REPORT='' havecmd notify-send && notify-send -u critical "bgproc error" "$1"
+	havecmd notify-send 2>/dev/null && notify-send -u critical "bgproc error" "$1"
 } && export -f send-error
 
 ##### LOCKFILE #####
 
 # exit if lock file already exists
 if [[ -e "$LOCKFILE" ]]; then
-	send-error "Lockfile at ${LOCKFILE} already exists..."
+	send-error "Lockfile at ${LOCKFILE} already exists, exiting..."
 	exit 1
 fi
 
-# delete lockfile when on exit
+# delete lockfile when bgproc exits
 cleanup() {
 	rm "$LOCKFILE"
 }
@@ -54,6 +61,13 @@ trap cleanup EXIT
 
 # create lockfile
 touch "$LOCKFILE"
+
+##### LIST JOBS #####
+
+printlog "Job List:"
+while read -r -d $'\0' script; do
+  printlog "$script"
+done < <(find . -type f -name "*.job" -print0)
 
 ##### MAIN LOOP #####
 
@@ -65,5 +79,5 @@ while true; do
 	while read -r -d $'\0' script; do
 		bash "$script"
 	done < <(find . -type f -name "*.job" -print0)
-	sleep 1m
+	sleep 60
 done
