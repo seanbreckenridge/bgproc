@@ -1,4 +1,6 @@
 #!/bin/bash
+# backup my computer to my raspberry pi over the network
+# https://github.com/seanbreckenridge/raspi-backup
 readonly backup_script="$REPOS/raspi-backup/backup"
 evry 6 hours -raspibackup && {
 	printlog 'raspi-backup:starting backup...'
