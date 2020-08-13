@@ -5,7 +5,7 @@ A `bash` loop to run tasks in the background. Used as a `anacron` alternative.
 Uses a lock file at `/tmp/bgproc.lock` to make sure duplicate `bgproc` processes aren't running, though it wouldn't make a huge difference since commands are run behind `evry` anyways.
 
 Uses:
-  * [`evry`](https://github.com/seanbreckenridge/evry) to schedule commands/run things periodically. `evry` saves persistent files with timestamps to the computer for each job, which means this follows `anacron`s philosopy - the computer doesn't have to be running 24 x 7. The checks when tasks were last run, and if that duration has elapsed (e.g. `2 days`), it runs the task.
+  * [`evry`](https://github.com/seanbreckenridge/evry) to schedule commands/run things periodically. `evry` saves persistent files with timestamps to the computer for each job, which means this follows `anacron`s philosopy - the computer doesn't have to be running 24 x 7. `evry` checks when tasks were last run, and if that duration has elapsed (e.g. `2 days`), it runs the task.
   * [`wait-for-internet`](https://github.com/seanbreckenridge/wait-for-internet) to make sure the computer has a remote connection before running any jobs
 
 This runs any other files it finds recursively with `find` from the current directory that end with `.job`. Any script that ends with `.priv.job` isn't synced to git. You could potentially put this on your `$PATH`, and then `cd` to some directory that has your `.job` scripts, and run it from there.
