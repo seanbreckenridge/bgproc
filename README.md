@@ -32,4 +32,10 @@ Logs are very basic, just saves the timestamp and the message passed (see the `p
 
 The `printlog` function is exported into the bash environment, so its accessible from any other bash scripts `bgproc` runs; e.g. its used in [`personal_jobs/raspi.job`](personal_jobs/raspi.job).
 
+If you want to run multiple `bgproc` instances for different directories/jobs, you can change the lockfile to allow different instances to run like:
+
+```
+BGPROC_LOCKFILE=/tmp/personal_jobs BGPROC_LOGFILE=/tmp/personal_logs ./bgproc
+```
+
 This doesn't offer a way to run this automatically, thats should be handled by you. To daemonize this, I run this at the beginning of my X session (on linux). Can also run (kill/restart) it with `pkill bgproc`/`setsid ./bgproc`. Could potentially use a `systemd` service (on linux flavors that have that) or an [Automator script](https://stackoverflow.com/questions/6442364/running-script-upon-login-mac) on macOS.

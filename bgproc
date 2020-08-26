@@ -18,7 +18,7 @@ havecmd() {
 
 ##### SETUP #####
 
-declare -rx LOCKFILE='/tmp/bgproc.lock'
+declare -rx LOCKFILE="${BGPROC_LOCKFILE:-/tmp/bgproc.lock}"
 declare -rx LOGFILE="${BGPROC_LOGFILE:-/tmp/bgproc.log}"
 
 declare -a required_binaries
