@@ -77,7 +77,7 @@ while true; do
 	wait-for-internet >/dev/null 2>&1
 	# run any other jobs in this directory
 	while read -r -d $'\0' script; do
-		bash "$script"
+		bash "$script" 2>&1
 	done < <(find . -type f -name "*.job" -print0)
 	sleep 60
 done
