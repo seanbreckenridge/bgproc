@@ -38,4 +38,6 @@ If you want to run multiple `bgproc` instances for different directories/jobs, y
 BGPROC_LOCKFILE=/tmp/personal_jobs BGPROC_LOGFILE=/tmp/personal_logs ./bgproc
 ```
 
+For an example wrapper, see my [`hpi`](https://github.com/seanbreckenridge/HPI/blob/master/bgproc) repo.
+
 This doesn't offer a way to run this automatically, thats should be handled by you. To daemonize this, I run this at the beginning of my X session (on linux). Can also run (kill/restart) it with `pkill bgproc`/`setsid ./bgproc`. Could potentially use a `systemd` service (on linux flavors that have that) or an [Automator script](https://stackoverflow.com/questions/6442364/running-script-upon-login-mac) on macOS.
