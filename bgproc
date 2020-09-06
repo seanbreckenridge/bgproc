@@ -38,7 +38,7 @@ printlog() {
 
 # print a log to to STDERR, and append to the logfile
 # if notify-send (to send a notification on linux) is
-# avaiable, also sends a notification
+# available, also sends a notification
 send-error() {
 	printf '%s:error:%s\n' "$(date +%s)" "$1" >>"$LOGFILE"
 	printf '%s\n' "$1" >&2
