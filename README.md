@@ -27,7 +27,8 @@ This runs each `.job` file explicitly with `bash`, but you could easily write a 
 #!/bin/bash
 # every 2 days, run some python script
 
-evry 2 days -my_task {
+evry 2 days -my_task && {
+  printlog "running python script..."
   exec python3 /usr/local/bin/run_task.py
 }
 ```
