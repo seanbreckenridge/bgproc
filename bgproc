@@ -73,8 +73,8 @@ done < <(find . -type f -name "*.job" -print0)
 ##### MAIN LOOP #####
 
 # main loop
+printlog "Sleep duration: $SLEEP_TIME..."
 printlog "Starting loop..."
-printlog "Sleeping duration $SLEEP_TIME..."
 while true; do
 	# run any other jobs in this directory
 	while read -r -d $'\0' script; do
