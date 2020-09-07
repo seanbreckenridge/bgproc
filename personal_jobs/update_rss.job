@@ -1,7 +1,8 @@
 #!/bin/sh
 # update rss feeds on my computer
 # sean.fish/d/update-rss
-evry 15 minutes -updaterss && {
+evry 30 minutes -updaterss && {
+	wait-for-internet
 	if update-rss; then
 		printlog "updaterss:updated RSS feeds:$(cat ~/.cache/rss-unread)"
 	else

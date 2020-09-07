@@ -11,7 +11,7 @@ havecmd() {
 	if command -v "$1" >/dev/null 2>&1; then
 		return 0
 	else
-		printf 'Could not find %s on your $PATH\n' "$1" >&2
+		printf "Could not find %s on your \$PATH\n" "$1" >&2
 		return 1
 	fi
 } && export -f havecmd
@@ -20,9 +20,10 @@ havecmd() {
 
 declare -rx LOCKFILE="${BGPROC_LOCKFILE:-/tmp/bgproc.lock}"
 declare -rx LOGFILE="${BGPROC_LOGFILE:-/tmp/bgproc.log}"
+declare -rx SLEEP_TIME="${BGPROC_SLEEPTIME:-60}"
 
 declare -a required_binaries
-required_binaries=('wait-for-internet' 'evry')
+required_binaries=('evry')
 for binary in "${required_binaries[@]}"; do
 	havecmd "$binary" || exit $?
 done
@@ -66,18 +67,18 @@ touch "$LOCKFILE"
 
 printlog "Job List:"
 while read -r -d $'\0' script; do
-  printlog "$script"
+	printlog "$script"
 done < <(find . -type f -name "*.job" -print0)
 
 ##### MAIN LOOP #####
 
 # main loop
 printlog "Starting loop..."
+printlog "Sleeping duration $SLEEP_TIME..."
 while true; do
-	wait-for-internet >/dev/null 2>&1
 	# run any other jobs in this directory
 	while read -r -d $'\0' script; do
 		bash "$script" 2>&1
 	done < <(find . -type f -name "*.job" -print0)
-	sleep 60
+	sleep "$SLEEP_TIME"
 done

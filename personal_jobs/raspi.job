@@ -3,6 +3,7 @@
 # https://github.com/seanbreckenridge/raspi-backup
 readonly backup_script="$REPOS/raspi-backup/backup"
 evry 6 hours -raspibackup && {
+	wait-for-internet
 	printlog 'raspi-backup:starting backup...'
 	"$backup_script" >>/tmp/raspi_backup.log 2>&1 || {
 		evry rollback -raspibackup
