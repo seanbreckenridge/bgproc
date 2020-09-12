@@ -7,7 +7,7 @@ MINTLOG='/tmp/mint.log'
 update_mintable() {
 	readonly MINT_REPO="${REPOS}/mint"
 	readonly UPDATE_MINT="${MINT_REPO}/mint"
-	"$UPDATE_MINT" fetch >> "$MINTLOG" 2>&1 || return $?
+	"$UPDATE_MINT" fetch >>"$MINTLOG" 2>&1 || return $?
 }
 
 evry 6 hours -updatemint && {
