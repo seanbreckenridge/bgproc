@@ -1,5 +1,0 @@
-#!/bin/bash
-
-evry 5 minutes -warn_bgprocs && {
-  ps -ef | grep 'mpv-history-daemon /tmp/mpvsockets' | grep -q -v grep || send-error "mpv-daemon not running"
-}
