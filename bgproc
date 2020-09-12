@@ -82,7 +82,7 @@ print_jobs() {
 loop_iteration() {
 	while read -r -d $'\0' script; do
 		bash "$script" 2>&1
-	done < <(find . -type f -name "*.job" -print0)
+	done < <(job_list)
 }
 
 # main, background loop
