@@ -1,0 +1,6 @@
+#!/bin/sh
+# update https://github.com/wolfg1969/oh-my-stars
+evry 3 hours -update_my_stars && {
+	wait-for-internet
+	mystars -u 2>&1 >> /tmp/mystars_update.log
+}
