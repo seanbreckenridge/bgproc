@@ -35,6 +35,18 @@ evry 2 days -my_task && {
 
 ## Configuration
 
+Usage:
+
+```
+Runs tasks in the background. Run without flags to start the background loop
+	-o		Runs the task loop once
+	-d		Runs the task loop once, in debug mode
+```
+
+See [here](https://gist.github.com/seanbreckenridge/e7ad77320c065d96f282f6d45deaa842) for example debug output.
+
+---
+
 If you want to save logs somewhere else, you can set the `BGPROC_LOGFILE` variable to a different location. Defaults to saving temporary logs at `/tmp/bgproc.log`
 
 Logs are very basic, just saves the timestamp and the message passed (see the `printlog` function), like:

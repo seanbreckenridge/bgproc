@@ -63,22 +63,65 @@ trap cleanup EXIT
 # create lockfile
 touch "$LOCKFILE"
 
-##### LIST JOBS #####
+#### CORE FUNCTIONALITY ####
 
-printlog "Job List:"
-while read -r -d $'\0' script; do
-	printlog "$script"
-done < <(find . -type f -name "*.job" -print0)
+# shorthand to list all jobs
+job_list() {
+	find . -type f -name "*.job" -print0
+}
 
-##### MAIN LOOP #####
+# print a list of all of the jobs
+print_jobs() {
+	printlog "Job List:"
+	while read -r -d $'\0' script; do
+		printlog "$script"
+	done < <(job_list)
+}
 
-# main loop
-printlog "Sleep duration: $SLEEP_TIME..."
-printlog "Starting loop..."
-while true; do
-	# run any other jobs in this directory
+# read in jobs, run each of them
+loop_iteration() {
 	while read -r -d $'\0' script; do
 		bash "$script" 2>&1
 	done < <(find . -type f -name "*.job" -print0)
-	sleep "$SLEEP_TIME"
+}
+
+# main, background loop
+bgproc_loop() {
+	printlog "Sleep duration: $SLEEP_TIME"
+	printlog "Starting loop..."
+	print_jobs
+	while true; do
+		loop_iteration
+		sleep "$SLEEP_TIME"
+	done
+}
+
+#### MAIN ####
+
+# handle flags and run
+while getopts 'hod' opt; do
+	case "$opt" in
+	h)
+		echo "Runs tasks in the background. Run without flags to start the background loop"
+		echo "	-o		Runs the task loop once"
+		echo "	-d		Runs the task loop once, in debug mode"
+		echo "See https://github.com/seanbreckenridge/bgproc for more info"
+		exit 0
+		;;
+	o)
+		print_jobs
+		loop_iteration
+		exit 0
+		;;
+	d)
+		print_jobs
+		EVRY_DEBUG=1 loop_iteration
+		exit 0
+		;;
+	*)
+		exit 1
+		;;
+	esac
 done
+
+bgproc_loop
