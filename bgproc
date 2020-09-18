@@ -5,28 +5,33 @@
 # also runs any other bash scripts in this directory
 # that end with .job
 
-# Function to test if a command is on the users $PATH
-# i.e. if they have a binary/script installed
+readonly script_name='bgproc'
+
 havecmd() {
-	if command -v "$1" >/dev/null 2>&1; then
+	local BINARY ERRMSG
+	# error if first argument isn't provided
+	BINARY="${1:?Must provide command to check}"
+	# the commend exists, exit with 0 (success!)
+	if command -v "$BINARY" >/dev/null 2>&1; then
 		return 0
 	else
-		printf "Could not find %s on your \$PATH\n" "$1" >&2
+		# construct error message
+		ERRMSG="'$script_name' requires '$BINARY', could not find that on your \$PATH"
+		if [[ -n "$2" ]]; then
+			ERRMSG="$ERRMSG. $2"
+		fi
+		printf '%s\n' "$ERRMSG" 1>&2
 		return 1
 	fi
-} && export -f havecmd
+}
 
 ##### SETUP #####
+
+havecmd evry 'Install it with "cargo install evry"' || exit $?
 
 declare -rx LOCKFILE="${BGPROC_LOCKFILE:-/tmp/bgproc.lock}"
 declare -rx LOGFILE="${BGPROC_LOGFILE:-/tmp/bgproc.log}"
 declare -rx SLEEP_TIME="${BGPROC_SLEEPTIME:-60}"
-
-declare -a required_binaries
-required_binaries=('evry')
-for binary in "${required_binaries[@]}"; do
-	havecmd "$binary" || exit $?
-done
 
 ##### OUT/ERR LOGGING FUNCTIONS #####
 
