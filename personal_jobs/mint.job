@@ -10,7 +10,7 @@ update_mintable() {
 	"$UPDATE_MINT" fetch >>"$MINTLOG" 2>&1 || return $?
 }
 
-evry 2 hours -updatemint && {
+evry 6 hours -updatemint && {
 	wait-for-internet
 	printlog 'mint:fetching accounts...'
 	update_mintable || send-error "Could not fetch data for mint, see $MINTLOG"
