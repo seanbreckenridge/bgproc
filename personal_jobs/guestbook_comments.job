@@ -1,6 +1,6 @@
 #!/bin/bash
 # saves the number of unapproved comments to a cache file
-# this is for my gues book on https://sean.fish/
+# this is for my guest book on https://sean.fish/
 
 get_count() {
 	local SSH_OUTPUT COUNT_LINE
