@@ -17,5 +17,5 @@ evry 1 hours -guestbook_comments && {
 	printlog 'guestbook:updating cache file...'
 	readonly CACHE_FILE="${XDG_CACHE_HOME:-${HOME}/.cache}/guestbook-comments"
 	COUNT="$(get_count)" || return $?
-	echo "$COUNT" > "$CACHE_FILE"
+	echo "$COUNT" >"$CACHE_FILE"
 }
