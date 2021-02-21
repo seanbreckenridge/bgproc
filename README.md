@@ -59,7 +59,7 @@ You could alternatively clone this repository and create a 'jobs' folder (the na
 
 ---
 
-If you want to save logs somewhere else, you can set the `BGPROC_LOGFILE` variable to a different location. Defaults to saving temporary logs at `/tmp/bgproc.log`
+If you want to save logs somewhere else, you can set the `BGPROC_LOGFILE` environment variable to a different location. Defaults to saving temporary logs at `/tmp/bgproc.log`
 
 Logs are very basic, just saves the timestamp and the message passed (see the `printlog` function), like:
 
