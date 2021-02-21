@@ -2,8 +2,6 @@
 # a bash loop to run things in the background
 # uses my evry tool to run commands periodically
 # https://github.com/seanbreckenridge/evry
-# also runs any other bash scripts in this directory
-# that end with .job
 
 readonly script_name='bgproc'
 
@@ -51,42 +49,34 @@ send-error() {
 	havecmd notify-send 2>/dev/null && notify-send -u critical "bgproc error" "$1"
 } && export -f send-error
 
-##### LOCKFILE #####
-
-# exit if lock file already exists
-if [[ -e "$LOCKFILE" ]]; then
-	send-error "Lockfile at ${LOCKFILE} already exists, exiting..."
-	exit 1
-fi
-
-# delete lockfile when bgproc exits
-cleanup() {
-	rm "$LOCKFILE"
-}
-trap cleanup EXIT
-
-# create lockfile
-touch "$LOCKFILE"
-
 #### CORE FUNCTIONALITY ####
+
+declare -a JOB_DIRS
+JOB_DIRS=()
 
 # shorthand to list all jobs
 job_list() {
-	find . -type f -name "*.job" -print0
+	for dir in "${JOB_DIRS[@]}"; do
+		find "${dir}" -type f -name "*.job" -print0
+	done
 }
 
 # print a list of all of the jobs
 print_jobs() {
+	printlog "Searching for jobs in:"
+	for dir in "${JOB_DIRS[@]}"; do
+		printlog "${dir}"
+	done
 	printlog "Job List:"
 	while read -r -d $'\0' script; do
-		printlog "$script"
+		printlog "${script}"
 	done < <(job_list)
 }
 
 # read in jobs, run each of them
 loop_iteration() {
 	while read -r -d $'\0' script; do
-		bash "$script" 2>&1
+		bash "${script}" 2>&1
 	done < <(job_list)
 }
 
@@ -94,7 +84,6 @@ loop_iteration() {
 bgproc_loop() {
 	printlog "Sleep duration: $SLEEP_TIME"
 	printlog "Starting loop..."
-	print_jobs
 	while true; do
 		loop_iteration
 		sleep "$SLEEP_TIME"
@@ -103,30 +92,81 @@ bgproc_loop() {
 
 #### MAIN ####
 
+#### PARSE FLAGS ####
+
+ACTION='loop'
+
 # handle flags and run
 while getopts 'hod' opt; do
 	case "$opt" in
 	h)
+		echo "Usage: bgproc [-o] [-d] [DIR...]"
 		echo "Runs tasks in the background. Run without flags to start the background loop"
 		echo "	-o		Runs the task loop once"
 		echo "	-d		Runs the task loop once, in debug mode"
+		echo "Any additional arguments should be directories which contain '.job' files"
+		echo "If no directories are provided, searches from the current directory recursively"
 		echo "See https://github.com/seanbreckenridge/bgproc for more info"
 		exit 0
 		;;
 	o)
-		print_jobs
-		loop_iteration
-		exit 0
+		ACTION='once'
 		;;
 	d)
-		print_jobs
-		EVRY_DEBUG=1 loop_iteration
-		exit 0
+		ACTION='debug'
 		;;
 	*)
+		echo "Unexpected argument: ${opt}" >&2
 		exit 1
 		;;
 	esac
 done
+shift $((OPTIND - 1))
 
-bgproc_loop
+# If no additional positions were given, assume current directory
+case "${#@}" in
+	0)
+		JOB_DIRS+=('.')
+		;;
+	*)
+		for dir in "$@"; do
+			JOB_DIRS+=("${dir}")
+			[[ -e "${dir}" ]] || printf "Warning: %s does not exist...\n" "${dir}" >&2
+			[[ -d "${dir}" ]] || printf "Warning: %s is not a directory...\n" "${dir}" >&2
+		done
+		;;
+esac
+
+##### LOCKFILE #####
+
+# exit if lock file already exists
+if [[ -e "${LOCKFILE}" ]]; then
+	send-error "Lockfile at ${LOCKFILE} already exists, exiting..."
+	exit 1
+fi
+
+# delete lockfile when bgproc exits
+cleanup() {
+	rm "${LOCKFILE}"
+}
+trap cleanup EXIT
+
+# create lockfile
+touch "${LOCKFILE}"
+
+##### RUN ACTION #####
+
+case "${ACTION}" in
+	once)
+		print_jobs
+		loop_iteration
+		;;
+	debug)
+		print_jobs
+		EVRY_DEBUG=1 loop_iteration
+		;;
+	loop)
+		bgproc_loop
+		;;
+esac
+

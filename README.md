@@ -8,7 +8,7 @@ This uses [`evry`](https://github.com/seanbreckenridge/evry) to schedule command
 
 ## How?
 
-This runs any other files it finds recursively with `find` from the current directory that end with `.job`. You could also put this on your `$PATH`, `cd` to some directory that has your `.job` scripts, and run it from there.
+This runs any other files it finds recursively with `find` from the current directory that end with `.job`. You can alternatively provide directories which contain `.job` files as positional arguments.
 
 A potential `.job` file might look like:
 
@@ -38,12 +38,24 @@ evry 2 days -my_task && {
 Usage:
 
 ```
+Usage: bgproc [-o] [-d] [DIR...]
 Runs tasks in the background. Run without flags to start the background loop
 	-o		Runs the task loop once
 	-d		Runs the task loop once, in debug mode
+Any additional arguments should be directories which contain '.job' files
+If no directories are provided, searches from the current directory recursively
+See https://github.com/seanbreckenridge/bgproc for more info
 ```
 
 See [here](https://gist.github.com/seanbreckenridge/e7ad77320c065d96f282f6d45deaa842) for example debug output.
+
+### Install
+
+Copy the `bgproc` script onto your `$PATH` somewhere and make it executable. To automate:
+
+`sh <(curl -sSL http://git.io/sinister) -u 'https://raw.githubusercontent.com/seanbreckenridge/bgproc/master/bgproc'`
+
+You could alternatively clone this repository and create a 'jobs' folder (the name doesn't particularly matter), placing `.job` files in that directory. Then, just run the script like `./bgproc` while in this directory, it doesn't have to be on your `$PATH`.
 
 ---
 
@@ -58,7 +70,7 @@ Logs are very basic, just saves the timestamp and the message passed (see the `p
 1597283664:Starting loop...
 ```
 
-The `printlog` function is exported into the bash environment, so its accessible from any other bash scripts `bgproc` runs; e.g. its used in [`personal_jobs/raspi.job`](personal_jobs/raspi.job).
+The `printlog` function (which appends output to STDOUT and the bgproc logfile) is exported into the bash environment, so its accessible from any other bash scripts `bgproc` runs.
 
 ---
 
@@ -68,11 +80,10 @@ This waits for `60 seconds` between running jobs, if you want to increase/change
 
 ---
 
-If you want to run multiple `bgproc` instances for different directories/jobs, put `bgproc` on your `$PATH`, `cd` elsewhere, and set the `BGPROC_LOCKFILE` to allow multiple instances of `bgproc` to run at the same time:
+If you want to run multiple `bgproc` instances for different directories/jobs, put `bgproc` on your `$PATH`, and set the `BGPROC_LOCKFILE` environment variable to allow multiple instances of `bgproc` to run at the same time:
 
 ```
-cd /some/other/directory/
-BGPROC_LOCKFILE=/tmp/personal_jobs BGPROC_LOGFILE=/tmp/personal_logs bgproc
+BGPROC_LOCKFILE=/tmp/personal_jobs.lock BGPROC_LOGFILE=/tmp/personal_logs bgproc /some/other/directory
 ```
 
 For an example wrapper, see my [`HPI`](https://github.com/seanbreckenridge/HPI/blob/master/bgproc) `bgproc` wrapper.
