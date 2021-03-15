@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # a bash loop to run things in the background
 # uses my evry tool to run commands periodically
 # https://github.com/seanbreckenridge/evry
