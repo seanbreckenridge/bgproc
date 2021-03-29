@@ -41,12 +41,16 @@ printlog() {
 } && export -f printlog
 
 # print a log to to STDERR, and append to the logfile
-# if notify-send (to send a notification on linux) is
-# available, also sends a notification
+# sends a notification if possible
 send-error() {
+	local title
+	title="${BGPROC_TITLE:-'bgproc error'}"
 	printf '%s:error:%s\n' "$(date +%s)" "$1" >>"$LOGFILE"
 	printf '%s\n' "$1" >&2
-	havecmd notify-send 2>/dev/null && notify-send -u critical "bgproc error" "$1"
+	# on linux
+	havecmd notify-send 2>/dev/null && notify-send -u critical "${title}" "$1" && return
+	# on mac
+	havecmd osascript 2>/dev/null && osascript -e "$(printf 'display notification "%s" with title "%s"' "${title}" "$1")" && return
 } && export -f send-error
 
 #### CORE FUNCTIONALITY ####
