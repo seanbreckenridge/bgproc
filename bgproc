@@ -129,16 +129,16 @@ shift $((OPTIND - 1))
 
 # If no additional positions were given, assume current directory
 case "${#@}" in
-	0)
-		JOB_DIRS+=('.')
-		;;
-	*)
-		for dir in "$@"; do
-			JOB_DIRS+=("${dir}")
-			[[ -e "${dir}" ]] || printf "Warning: %s does not exist...\n" "${dir}" >&2
-			[[ -d "${dir}" ]] || printf "Warning: %s is not a directory...\n" "${dir}" >&2
-		done
-		;;
+0)
+	JOB_DIRS+=('.')
+	;;
+*)
+	for dir in "$@"; do
+		JOB_DIRS+=("${dir}")
+		[[ -e "${dir}" ]] || printf "Warning: %s does not exist...\n" "${dir}" >&2
+		[[ -d "${dir}" ]] || printf "Warning: %s is not a directory...\n" "${dir}" >&2
+	done
+	;;
 esac
 
 ##### LOCKFILE #####
@@ -161,16 +161,15 @@ touch "${LOCKFILE}"
 ##### RUN ACTION #####
 
 case "${ACTION}" in
-	once)
-		print_jobs
-		loop_iteration
-		;;
-	debug)
-		print_jobs
-		EVRY_DEBUG=1 loop_iteration
-		;;
-	loop)
-		bgproc_loop
-		;;
+once)
+	print_jobs
+	loop_iteration
+	;;
+debug)
+	print_jobs
+	EVRY_DEBUG=1 loop_iteration
+	;;
+loop)
+	bgproc_loop
+	;;
 esac
-
