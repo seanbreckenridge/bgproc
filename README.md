@@ -2,11 +2,9 @@
 
 A `bash` loop to run tasks in the background. Used as a `anacron` alternative.
 
-Uses a lock file at `/tmp/bgproc.lock` to make sure duplicate `bgproc` processes aren't running, though it wouldn't make a huge difference since commands are run behind `evry` anyways.
-
 This uses [`evry`](https://github.com/seanbreckenridge/evry) to schedule commands/run things periodically. `evry` saves persistent files with timestamps to the computer for each job, which means this follows `anacron`s philosophy - the computer doesn't have to be running 24 x 7. `evry` checks when tasks were last run, and if that duration has elapsed (e.g. `2 days`), it runs the task.
 
-You can see my jobs/bgproc wrapper [here](https://github.com/seanbreckenridge/dotfiles/tree/master/.local/scripts/supervisor)
+You can see my jobs/bgproc wrapper [here](https://github.com/seanbreckenridge/dotfiles/tree/master/.local/scripts/supervisor), which I split into jobs specific to linux/mac.
 
 ## How?
 
@@ -63,7 +61,7 @@ You could alternatively clone this repository and create a 'jobs' folder (the na
 
 If you want to save logs somewhere else, you can set the `BGPROC_LOGFILE` environment variable to a different location. Defaults to saving temporary logs at `/tmp/bgproc.log`
 
-Logs are very basic, just saves the timestamp and the message passed (see the `printlog` function), like:
+Logs are very basic, just saves the timestamp and the message passed (see the [`printlog`](https://github.com/seanbreckenridge/bgproc/blob/0f83d51c058fef86efc585ca1173780269134d98/bgproc#L38-L54) function), like:
 
 ```
 1613892690:Starting loop...
