@@ -61,7 +61,7 @@ JOB_DIRS=()
 # shorthand to list all jobs
 job_list() {
 	for dir in "${JOB_DIRS[@]}"; do
-		find "${dir}" -type f -name "*.job" -print0
+		find -L "${dir}" -type f -name "*.job" -print0
 	done
 }
 
