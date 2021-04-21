@@ -86,15 +86,13 @@ loop_iteration() {
 
 # main, background loop
 bgproc_loop() {
-	printlog "Sleep duration: $SLEEP_TIME"
+	printlog "Sleep duration: ${SLEEP_TIME}"
 	printlog "Starting loop..."
 	while true; do
 		loop_iteration
-		sleep "$SLEEP_TIME"
+		sleep "${SLEEP_TIME}"
 	done
 }
-
-#### MAIN ####
 
 #### PARSE FLAGS ####
 
@@ -102,7 +100,7 @@ ACTION='loop'
 
 # handle flags and run
 while getopts 'hod' opt; do
-	case "$opt" in
+	case "${opt}" in
 	h)
 		echo "Usage: bgproc [-o] [-d] [DIR...]"
 		echo "Runs tasks in the background. Run without flags to start the background loop"
@@ -143,11 +141,13 @@ esac
 
 ##### LOCKFILE #####
 
-# exit if lock file already exists
-if [[ -e "${LOCKFILE}" ]]; then
-	send-error "Lockfile at ${LOCKFILE} already exists, exiting..."
-	exit 1
-fi
+check_lockfile() {
+	# exit if lock file already exists
+	if [[ -e "${LOCKFILE}" ]]; then
+		send-error "Lockfile at ${LOCKFILE} already exists, exiting..."
+		exit 1
+	fi
+}
 
 # delete lockfile when bgproc exits
 cleanup() {
@@ -158,7 +158,7 @@ trap cleanup EXIT
 # create lockfile
 touch "${LOCKFILE}"
 
-##### RUN ACTION #####
+##### RUN #####
 
 case "${ACTION}" in
 once)
@@ -170,6 +170,9 @@ debug)
 	EVRY_DEBUG=1 loop_iteration
 	;;
 loop)
+	# only check lockfile when running loop, allows the user to run -o or -d
+	# without having to specify a separate lockfile
+	check_lockfile
 	bgproc_loop
 	;;
 esac
