@@ -73,7 +73,7 @@ For reference, my jobs often follow a structure like this:
 ```bash
 #!/usr/bin/env bash
 
-evry 2 hours -somecommand {
+evry 2 hours -somecommand && {
   printlog "some command: running..."  # saves timestamp to logfile
   somecommand || send-error "some command failed..."  # notifies me if this fails
 }
