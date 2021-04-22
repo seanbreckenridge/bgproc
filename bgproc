@@ -149,11 +149,18 @@ check_lockfile() {
 	fi
 }
 
-# delete lockfile when bgproc exits
-cleanup() {
-	rm "${LOCKFILE}"
-}
-trap cleanup EXIT
+# only check lockfile when running loop, allows the user to run -o or -d
+# without having to specify a separate lockfile
+if [[ "$ACTION" == 'loop' ]]; then
+	check_lockfile
+	# delete lockfile when bgproc exits
+	cleanup() {
+		rm "${LOCKFILE}"
+	}
+	trap cleanup EXIT
+	# create lockfile
+	touch "${LOCKFILE}"
+fi
 
 ##### RUN #####
 
@@ -167,11 +174,6 @@ debug)
 	EVRY_DEBUG=1 loop_iteration
 	;;
 loop)
-	# only check lockfile when running loop, allows the user to run -o or -d
-	# without having to specify a separate lockfile
-	check_lockfile
-	# create lockfile
-	touch "${LOCKFILE}"
 	bgproc_loop
 	;;
 esac
