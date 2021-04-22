@@ -155,9 +155,6 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# create lockfile
-touch "${LOCKFILE}"
-
 ##### RUN #####
 
 case "${ACTION}" in
@@ -173,6 +170,8 @@ loop)
 	# only check lockfile when running loop, allows the user to run -o or -d
 	# without having to specify a separate lockfile
 	check_lockfile
+	# create lockfile
+	touch "${LOCKFILE}"
 	bgproc_loop
 	;;
 esac
