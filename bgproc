@@ -27,8 +27,12 @@ havecmd() {
 
 havecmd evry 'Install it with "cargo install evry"' || exit $?
 
-declare -rx LOCKFILE="${BGPROC_LOCKFILE:-/tmp/bgproc.lock}"
-declare -rx LOGFILE="${BGPROC_LOGFILE:-/tmp/bgproc.log}"
+# if TMPDIR environment variable is set, use that
+# set on android/termux
+declare -rx TEMP_DIR="${TMPDIR:-/tmp}"
+
+declare -rx LOCKFILE="${BGPROC_LOCKFILE:-${TEMP_DIR}/bgproc.lock}"
+declare -rx LOGFILE="${BGPROC_LOGFILE:-${TEMP_DIR}/bgproc.log}"
 declare -rx SLEEP_TIME="${BGPROC_SLEEPTIME:-60}"
 
 ##### OUT/ERR LOGGING FUNCTIONS #####
