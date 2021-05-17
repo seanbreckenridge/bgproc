@@ -91,9 +91,15 @@ If you want to run multiple `bgproc` instances for different directories/jobs, p
 BGPROC_LOCKFILE=/tmp/personal_jobs.lock BGPROC_LOGFILE=/tmp/personal_logs bgproc /some/other/directory
 ```
 
-This doesn't offer a way to run this automatically, thats should be handled by you. To daemonize this, I run this with [`supervisor`](https://github.com/Supervisor/supervisor) (since it being cross platform means my background processes are platform agnostic) at the beginning of my X session on linux, and [check whenever I open a terminal on mac](https://github.com/seanbreckenridge/dotfiles/blob/master/.config/zsh/mac.zsh).
+#### Background Service
 
-Could potentially use a `systemd` service (on linux flavors that have that) or an [Automator script](https://stackoverflow.com/questions/6442364/running-script-upon-login-mac) on macOS.
+This doesn't offer a way to run this automatically, thats should be handled by you. Could potentially use a `systemd` service (on linux flavors that have that) or an [Automator script](https://stackoverflow.com/questions/6442364/running-script-upon-login-mac) on macOS.
+
+Personally I run this with [`supervisor`](https://github.com/Supervisor/supervisor) (since it being cross platform means my background processes are platform agnostic) at the beginning of my X session on linux, and [check whenever I open a terminal on mac](https://github.com/seanbreckenridge/dotfiles/blob/master/.config/zsh/mac.zsh) - see [here](https://github.com/seanbreckenridge/dotfiles/tree/master/.local/scripts/supervisor)
+
+On [`termux`](https://termux.com/) (android), where handling background tasks is a bit more complicated, instead of running this in the background, I use the `-o` flag to run the loop once a day, checking when I open a terminal. In my shell profile, I put something like:
+
+`evry 1 day -run_android_jobs && bgproc -o ~/.local/scripts/supervisor/jobs`
 
 ### Performance
 
