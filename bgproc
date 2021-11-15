@@ -3,7 +3,14 @@
 # uses my evry tool to run commands periodically
 # https://github.com/seanbreckenridge/evry
 
-readonly script_name='bgproc'
+declare ACTION QUIET
+ACTION='loop'
+QUIET=
+
+eprintf() {
+	((QUIET)) && return
+	printf "$@" 1>&2
+}
 
 havecmd() {
 	local BINARY ERRMSG
@@ -14,11 +21,11 @@ havecmd() {
 		return 0
 	else
 		# construct error message
-		ERRMSG="'$script_name' requires '$BINARY', could not find that on your \$PATH"
+		ERRMSG="bgproc requires '$BINARY', could not find that on your \$PATH"
 		if [[ -n "$2" ]]; then
 			ERRMSG="$ERRMSG. $2"
 		fi
-		printf '%s\n' "$ERRMSG" 1>&2
+		eprintf '%s\n' "$ERRMSG"
 		return 1
 	fi
 }
@@ -41,11 +48,15 @@ declare -rx SLEEP_TIME="${BGPROC_SLEEPTIME:-60}"
 
 # print a log to STDOUT and append to logfile
 printlog() {
+	((QUIET)) && return
 	printf "$(date +%s):%s\n" "$1" | tee -a "$LOGFILE"
 } && export -f printlog
 
 # print a log to to STDERR, and append to the logfile
 # sends a notification if possible
+# if the BGPROC_TITLE environment variable is set, uses that
+# as the title
+# not silenced by the quiet flag
 send-error() {
 	local title
 	title="${BGPROC_TITLE:-'bgproc error'}"
@@ -100,19 +111,18 @@ bgproc_loop() {
 
 #### PARSE FLAGS ####
 
-ACTION='loop'
-
 # handle flags and run
-while getopts 'hod' opt; do
+while getopts 'hodq' opt; do
 	case "${opt}" in
 	h)
-		echo "Usage: bgproc [-o] [-d] [DIR...]"
-		echo "Runs tasks in the background. Run without flags to start the background loop"
-		echo "	-o		Runs the task loop once"
-		echo "	-d		Runs the task loop once, in debug mode"
-		echo "Any additional arguments should be directories which contain '.job' files"
-		echo "If no directories are provided, searches from the current directory recursively"
-		echo "See https://github.com/seanbreckenridge/bgproc for more info"
+		eprintf "Usage: bgproc [-o] [-d] [-q] [DIR...]\n"
+		eprintf "Runs tasks in the background. Run without flags to start the background loop\n"
+		eprintf "	-o		Runs the task loop once\n"
+		eprintf "	-d		Runs the task loop once, in debug mode\n"
+		eprintf "	-q		Quiet mode, silences any logs\n"
+		eprintf "Any additional arguments should be directories which contain '.job' files\n"
+		eprintf "If no directories are provided, searches from the current directory recursively\n"
+		eprintf "See https://github.com/seanbreckenridge/bgproc for more info\n"
 		exit 0
 		;;
 	o)
@@ -121,8 +131,11 @@ while getopts 'hod' opt; do
 	d)
 		ACTION='debug'
 		;;
+	q)
+		QUIET=1
+		;;
 	*)
-		echo "Unexpected argument: ${opt}" >&2
+		eprintf "Unexpected argument: ${opt}\n"
 		exit 1
 		;;
 	esac
@@ -137,8 +150,8 @@ case "${#@}" in
 *)
 	for dir in "$@"; do
 		JOB_DIRS+=("${dir}")
-		[[ -e "${dir}" ]] || printf "Warning: %s does not exist...\n" "${dir}" >&2
-		[[ -d "${dir}" ]] || printf "Warning: %s is not a directory...\n" "${dir}" >&2
+		[[ -e "${dir}" ]] || eprintf "Warning: %s does not exist...\n" "${dir}" >&2
+		[[ -d "${dir}" ]] || eprintf "Warning: %s is not a directory...\n" "${dir}" >&2
 	done
 	;;
 esac
