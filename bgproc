@@ -9,6 +9,7 @@ QUIET=
 
 eprintf() {
 	((QUIET)) && return
+	# shellcheck disable=SC2059
 	printf "$@" 1>&2
 }
 
