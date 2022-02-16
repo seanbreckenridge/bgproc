@@ -50,9 +50,10 @@ See [here](https://gist.github.com/seanbreckenridge/e7ad77320c065d96f282f6d45dea
 
 ### Install
 
-Copy the `bgproc` script onto your `$PATH` somewhere and make it executable. To automate:
+Copy the `bgproc` script onto your `$PATH` somewhere and make it executable. To automate, could use:
 
-`sh <(curl -sSL http://git.io/sinister) -u 'https://raw.githubusercontent.com/seanbreckenridge/bgproc/master/bgproc'`
+`sinister`: `sh <(curl -sSL http://git.io/sinister) -u 'https://raw.githubusercontent.com/seanbreckenridge/bgproc/master/bgproc'`
+[`basher`](https://github.com/basherpm/basher): `basher install seanbreckenridge/bgproc`
 
 You could alternatively clone this repository and create a 'jobs' folder (the name doesn't particularly matter), placing `.job` files in that directory. Then, just run the script like `./bgproc` while in this directory, it doesn't have to be on your `$PATH`.
 
