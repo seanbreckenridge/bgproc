@@ -4,7 +4,7 @@ A `bash` loop to run tasks in the background. Used as a `anacron` alternative.
 
 This uses [`evry`](https://github.com/seanbreckenridge/evry) to schedule commands/run things periodically. `evry` saves persistent files with timestamps to the computer for each job, which means this follows `anacron`s philosophy - the computer doesn't have to be running 24 x 7. `evry` checks when tasks were last run, and if that duration has elapsed (e.g. `2 days`), it runs the task.
 
-You can see my jobs/bgproc wrapper [here](https://github.com/seanbreckenridge/dotfiles/tree/master/.local/scripts/supervisor), which I split into jobs specific to linux/mac.
+You can see my jobs/bgproc wrapper [here](https://github.com/seanbreckenridge/dotfiles/tree/master/.local/scripts), which I split into jobs specific to linux/mac.
 
 ## How?
 
@@ -97,11 +97,11 @@ BGPROC_LOCKFILE=/tmp/personal_jobs.lock BGPROC_LOGFILE=/tmp/personal_logs bgproc
 
 This doesn't offer a way to run this automatically, thats should be handled by you. Could potentially use a `systemd` service (on linux flavors that have that) or an [Automator script](https://stackoverflow.com/questions/6442364/running-script-upon-login-mac) on macOS.
 
-Personally I run this with [`supervisor`](https://github.com/Supervisor/supervisor) (since it being cross platform means my background processes are platform agnostic) at the beginning of my X session on linux, and [check whenever I open a terminal on mac](https://github.com/seanbreckenridge/dotfiles/blob/master/.config/zsh/mac.zsh) - see [here](https://github.com/seanbreckenridge/dotfiles/tree/master/.local/scripts/supervisor)
+Personally I run this with [`supervisor`](https://github.com/Supervisor/supervisor) (since it being cross platform means my background processes are platform agnostic) at the beginning of my X session on linux, and [check whenever I open a terminal on mac](https://github.com/seanbreckenridge/dotfiles/blob/master/.config/zsh/mac.zsh) - see [here](https://github.com/seanbreckenridge/dotfiles/tree/master/.local/scripts)
 
-On [`termux`](https://termux.com/) (android), where handling background tasks is a bit more complicated, instead of running this in the background, I use the `-o` flag to run the loop once a day, checking when I open a terminal. In my shell profile, I put something like:
+On [`termux`](https://termux.com/) (android), where handling background tasks is a bit more complicated, instead of running this in the background, I use the `-o` flag to run the loop once a day, [checking when I open a terminal](https://github.com/seanbreckenridge/dotfiles/blob/master/.config/zsh/android.zsh). In my shell profile, I put something like:
 
-`evry 1 day -run_android_jobs && bgproc -o ~/.local/scripts/supervisor/jobs`
+`evry 1 day -run_android_jobs && bgproc -o ~/.local/scripts/supervisor_jobs`
 
 ### Performance
 
