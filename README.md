@@ -109,7 +109,7 @@ $ bgproc_on_machine -o
 1655993990:/home/sean/Repos/HPI-personal/jobs/linux
 ```
 
-You can see examples of those directory structures [here in my dotfiles](https://github.com/seanbreckenridge/dotfiles/tree/master/.local/scripts/supervisor_jobs) and [here in HPI](https://github.com/seanbreckenridge/HPI-personal/tree/master/jobs):
+You can see examples of those directory structures [in my dotfiles](https://github.com/seanbreckenridge/dotfiles/tree/master/.local/scripts/supervisor_jobs) and [in my personal HPI repo](https://github.com/seanbreckenridge/HPI-personal/tree/master/jobs):
 
 ```
 jobs
