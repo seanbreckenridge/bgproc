@@ -4,8 +4,6 @@ A `bash` loop to run tasks in the background. Used as a `anacron` alternative.
 
 This uses [`evry`](https://github.com/seanbreckenridge/evry) to schedule commands/run things periodically. `evry` saves persistent files with timestamps to the computer for each job, which means this follows `anacron`s philosophy - the computer doesn't have to be running 24 x 7. `evry` checks when tasks were last run, and if that duration has elapsed (e.g. `2 days`), it runs the task.
 
-You can see my jobs/bgproc wrapper [here](https://github.com/seanbreckenridge/dotfiles/tree/master/.local/scripts), which I split into jobs specific to linux/mac.
-
 ## How?
 
 This runs any other files it finds recursively with `find` from the current directory that end with `.job`. You can alternatively provide directories which contain `.job` files as positional arguments.
@@ -91,6 +89,54 @@ If you want to run multiple `bgproc` instances for different directories/jobs, p
 
 ```
 BGPROC_LOCKFILE=/tmp/personal_jobs.lock BGPROC_LOGFILE=/tmp/personal_logs bgproc /some/other/directory
+```
+
+## bgproc_on_machine
+
+I use `bgproc` on all of my machines and my phone, so `bgproc_on_machine` handles the task of figuring out which machine I'm currently on, so the correct background `.job`s can run. That uses [`on_machine`](https://github.com/seanbreckenridge/on_machine) internally, which generates a unique hash, like: `linux_arch` or `termux_android`.
+
+After setting the `$BGPROC_PATH` environment variable:
+
+```bash
+$ export BGPROC_PATH="${HPIDATA}/jobs:${HOME}/.local/scripts/supervisor_jobs:${REPOS}/HPI-personal/jobs"
+$ bgproc_on_machine -o
+1655993990:Searching for jobs in:
+1655993990:/home/sean/data/jobs/all
+1655993990:/home/sean/data/jobs/linux
+1655993990:/home/sean/.local/scripts/supervisor_jobs/all
+1655993990:/home/sean/.local/scripts/supervisor_jobs/linux
+1655993990:/home/sean/Repos/HPI-personal/jobs/all
+1655993990:/home/sean/Repos/HPI-personal/jobs/linux
+```
+
+You can see examples of those directory structures [here in my dotfiles](https://github.com/seanbreckenridge/dotfiles/tree/master/.local/scripts/supervisor_jobs) and [here in HPI](https://github.com/seanbreckenridge/HPI-personal/tree/master/jobs):
+
+```
+jobs
+├── all
+│   ├── backup_bash.job
+│   ├── backup_browser_history.job
+│   ├── backup_ipython.job
+│   ├── backup_zsh_history.job
+│   ├── doctor_snapshot.job
+│   ├── minecraft_advancements.job
+│   └── runelite_screenshots.job
+├── android
+├── linux
+│   ├── backup_albums.job
+│   ├── backup_bash_server_history.job
+│   ├── backup_chess.job
+│   ├── backup_garmin.job.disabled
+│   ├── backup_ghexport.job
+│   ├── backup_git_doc_history.job
+│   ├── backup_listenbrainz.job
+│   ├── backup_rexport.job
+│   ├── backup_stexport.job
+│   ├── backup_trakt.job
+│   └── mint.job
+└── mac
+    ├── backup_imessages.job
+    └── backup_safari_history.job
 ```
 
 #### Background Service
