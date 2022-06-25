@@ -3,9 +3,10 @@
 # uses my evry tool to run commands periodically
 # https://github.com/seanbreckenridge/evry
 
-declare ACTION QUIET
+declare ACTION QUIET NO_RECURSIVE
 ACTION='loop'
 QUIET=
+NO_RECURSIVE=
 
 eprintf() {
 	((QUIET)) && return
@@ -76,8 +77,11 @@ JOB_DIRS=()
 
 # shorthand to list all jobs
 job_list() {
+	local FIND_ARGS=()
+	((NO_RECURSIVE)) && FIND_ARGS+=(-maxdepth 1)
+	FIND_ARGS+=(-type f -name '*.job' -print0)
 	for dir in "${JOB_DIRS[@]}"; do
-		find -L "${dir}" -type f -name "*.job" -print0
+		find -L "${dir}" "${FIND_ARGS[@]}"
 	done
 }
 
@@ -113,11 +117,12 @@ bgproc_loop() {
 #### PARSE FLAGS ####
 
 # handle flags and run
-while getopts 'hodq' opt; do
+while getopts 'hodqn' opt; do
 	case "${opt}" in
 	h)
-		printf "Usage: bgproc [-o] [-d] [-q] [DIR...]\n"
+		printf "Usage: bgproc [-h] [-odqn] [DIR...]\n"
 		printf "Runs tasks in the background. Run without flags to start the background loop\n"
+		printf "	-n		Don't search directories recursively (add -maxdepth 1)\n"
 		printf "	-o		Runs the task loop once\n"
 		printf "	-d		Runs the task loop once, in debug mode\n"
 		printf "	-q		Quiet mode, silences any logs\n"
@@ -125,6 +130,9 @@ while getopts 'hodq' opt; do
 		printf "If no directories are provided, searches from the current directory recursively\n"
 		printf "See https://github.com/seanbreckenridge/bgproc for more info\n"
 		exit 0
+		;;
+	n)
+		NO_RECURSIVE=1
 		;;
 	o)
 		ACTION='once'
