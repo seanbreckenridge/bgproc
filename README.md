@@ -93,7 +93,7 @@ BGPROC_LOCKFILE=/tmp/personal_jobs.lock BGPROC_LOGFILE=/tmp/personal_logs bgproc
 
 ## bgproc_on_machine
 
-I use `bgproc` on all of my machines and my phone, so `bgproc_on_machine` handles the task of figuring out which machine I'm currently on, so the correct background `.job`s can run. That uses [`on_machine`](https://github.com/seanbreckenridge/on_machine) internally, which generates a unique hash, like: `linux_arch` or `termux_android`.
+I use `bgproc` on all of my machines and my phone, so `bgproc_on_machine` handles the task of figuring out which machine I'm currently on, so the correct background `.job`s can run. That uses [`on_machine`](https://github.com/seanbreckenridge/on_machine) internally, which generates a unique hash, like: `linux_arch` or `android_termux`.
 
 After setting the `$BGPROC_PATH` environment variable:
 
