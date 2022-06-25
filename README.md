@@ -34,7 +34,7 @@ evry 2 days -my_task && {
 ## Usage
 
 ```
-Usage: bgproc [-odqn] [DIR...]
+Usage: bgproc [-h] [-odqn] [DIR...]
 Runs tasks in the background. Run without flags to start the background loop
 	-n		Don't search directories recursively (add -maxdepth 1)
 	-o		Runs the task loop once
