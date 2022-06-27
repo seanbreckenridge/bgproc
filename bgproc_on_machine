@@ -39,7 +39,7 @@ split_bgproc_paths() {
 }
 
 compute_os_dirs() {
-	local ON_MACHINE_ARGS=()
+	local -a ON_MACHINE_ARGS=()
 	[[ -n "${ON_MACHINE_PATTERN}" ]] && ON_MACHINE_ARGS+=("${ON_MACHINE_PATTERN}")
 	for base in "${BASE_DIRS[@]}"; do
 		[[ -z "$base" ]] && continue
@@ -49,7 +49,7 @@ compute_os_dirs() {
 		fi
 		while read -r -d $'\0' match; do
 			OS_DIRS+=("$match")
-		done < <(on_machine -cmd match -print0 -filter dir -base "${base}" "${ON_MACHINE_PATTERN[@]}")
+		done < <(on_machine -cmd match -print0 -filter dir -base "${base}" "${ON_MACHINE_ARGS[@]}")
 	done
 }
 
