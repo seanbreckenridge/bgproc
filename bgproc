@@ -46,12 +46,14 @@ declare -rx SLEEP_TIME="${BGPROC_SLEEPTIME:-60}"
 
 ##### OUT/ERR LOGGING FUNCTIONS #####
 
+declare DATE_FMT="${BGPROC_DATE_FMT:-+%s}"
+
 # both of these accept one argument, which is the message to print
 
 # print a log to STDOUT and append to logfile
 printlog() {
 	((QUIET)) && return
-	printf "$(date +%s):%s\n" "$1" | tee -a "$LOGFILE"
+	printf "$(date "$DATE_FMT"):%s\n" "$1" | tee -a "$LOGFILE"
 } && export -f printlog
 
 # print a log to to STDERR, and append to the logfile
@@ -62,7 +64,7 @@ printlog() {
 send-error() {
 	local title
 	title="${BGPROC_TITLE:-'bgproc error'}"
-	printf '%s:error:%s\n' "$(date +%s)" "$1" >>"$LOGFILE"
+	printf '%s:error:%s\n' "$(date "$DATE_FMT")" "$1" >>"$LOGFILE"
 	printf '%s\n' "$1" >&2
 	# on linux
 	havecmd notify-send 2>/dev/null && notify-send -u critical "${title}" "$1" && return

@@ -82,14 +82,18 @@ evry 2 hours -somecommand && {
 
 ### Configuration
 
-This waits for `60 seconds` between running jobs, if you want to increase/change that, you can set the `BGPROC_SLEEPTIME` environment variable. To wait for 10 minutes between trying to run jobs:
-
-`BGPROC_SLEEPTIME=600 bgproc`
+This waits for `60 seconds` between running jobs, if you want to increase/change that, you can set the `BGPROC_SLEEPTIME` environment variable. To wait for 10 minutes between trying to run jobs: `BGPROC_SLEEPTIME=600 bgproc`
 
 If you want to run multiple `bgproc` instances for different directories/jobs, put `bgproc` on your `$PATH`, and set the `BGPROC_LOCKFILE` environment variable to allow multiple instances of `bgproc` to run at the same time:
 
-```
+```bash
 BGPROC_LOCKFILE=/tmp/personal_jobs.lock BGPROC_LOGFILE=/tmp/personal_logs bgproc /some/other/directory
+```
+
+To change the date format, you can set the `BGPROC_DATE_FMT` environment variable, that is passed to the `date` command, for more info see `man date`:
+
+```bash
+BGPROC_DATE_FMT='+%Y-%m-%dT%H-%M-%S' ./bgproc -o ./jobs
 ```
 
 ## bgproc_on_machine
