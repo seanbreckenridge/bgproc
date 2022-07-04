@@ -34,11 +34,12 @@ evry 2 days -my_task && {
 ## Usage
 
 ```
-Usage: bgproc [-h] [-odqn] [DIR...]
+Usage: bgproc [-h] [-odpqn] [DIR...]
 Runs tasks in the background. Run without flags to start the background loop
 	-n		Don't search directories recursively (add -maxdepth 1)
 	-o		Runs the task loop once
 	-d		Runs the task loop once, in debug mode
+	-p		Runs the task loop thrice, to pretty print debug info
 	-q		Quiet mode, silences any logs
 Any additional arguments should be directories which contain '.job' files
 If no directories are provided, searches from the current directory recursively
@@ -46,6 +47,19 @@ See https://github.com/seanbreckenridge/bgproc for more info
 ```
 
 See [here](https://gist.github.com/seanbreckenridge/e7ad77320c065d96f282f6d45deaa842) for example debug output.
+
+This offers a few ways to run the task loop once, `-o` (once), `-d` (with lots of debug information) or `-p`, in pretty mode, which tells you when each job will run next:
+
+```bash
+$ bgproc -p ~/.local/scripts/supervisor_jobs/linux
+glue-update-cubing-json - 5 days, 1 hour, 49 minutes, 47 seconds
+warn_mailsync - 9 minutes, 27 seconds
+bg-my-feed-index - 34 minutes, 48 seconds
+copy_images - 4 minutes, 27 seconds
+linkmusic - 46 minutes, 13 seconds
+guestbook_comments - 10 minutes, 18 seconds
+updaterss - 2 minutes, 45 seconds
+```
 
 ### Install
 

@@ -119,14 +119,15 @@ bgproc_loop() {
 #### PARSE FLAGS ####
 
 # handle flags and run
-while getopts 'hodqn' opt; do
+while getopts 'hodqnp' opt; do
 	case "${opt}" in
 	h)
-		printf "Usage: bgproc [-h] [-odqn] [DIR...]\n"
+		printf "Usage: bgproc [-h] [-odpqn] [DIR...]\n"
 		printf "Runs tasks in the background. Run without flags to start the background loop\n"
 		printf "	-n		Don't search directories recursively (add -maxdepth 1)\n"
 		printf "	-o		Runs the task loop once\n"
 		printf "	-d		Runs the task loop once, in debug mode\n"
+		printf "	-p		Runs the task loop thrice, to pretty print debug info\n"
 		printf "	-q		Quiet mode, silences any logs\n"
 		printf "Any additional arguments should be directories which contain '.job' files\n"
 		printf "If no directories are provided, searches from the current directory recursively\n"
@@ -141,6 +142,9 @@ while getopts 'hodqn' opt; do
 		;;
 	d)
 		ACTION='debug'
+		;;
+	p)
+		ACTION='pretty-debug'
 		;;
 	q)
 		QUIET=1
@@ -203,5 +207,16 @@ debug)
 	;;
 loop)
 	bgproc_loop
+	;;
+pretty-debug)
+	havecmd jq 'See https://stedolan.github.io/jq/download' || exit $?
+	havecmd paste 'paste is part of the GNU coreutils' || exit $?
+	havecmd sed || exit $?
+	# run the task loop twice quickly, in-case there are jobs that take a long time to run
+	# if some job expired the first time this ran, we don't want it to mess up the pretty
+	# debug output
+	loop_iteration
+	loop_iteration
+	EVRY_JSON=1 loop_iteration | jq -r '.[] | select((.type == "tag_name") or .type == "till_next_pretty") | .body' | paste -d " " - - | sed -e 's/ / - /'
 	;;
 esac
