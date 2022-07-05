@@ -48,6 +48,8 @@ declare -rx SLEEP_TIME="${BGPROC_SLEEPTIME:-60}"
 
 declare DATE_FMT="${BGPROC_DATE_FMT}"
 [[ -z "$DATE_FMT" ]] && DATE_FMT='+%s'
+# export so available in printlog/send-error functions
+declare -rx DATE_FMT
 
 # both of these accept one argument, which is the message to print
 
