@@ -46,14 +46,15 @@ declare -rx SLEEP_TIME="${BGPROC_SLEEPTIME:-60}"
 
 ##### OUT/ERR LOGGING FUNCTIONS #####
 
-declare DATE_FMT="${BGPROC_DATE_FMT:-+%s}"
+declare DATE_FMT="${BGPROC_DATE_FMT}"
+[[ -z "$DATE_FMT" ]] && DATE_FMT='+%s'
 
 # both of these accept one argument, which is the message to print
 
 # print a log to STDOUT and append to logfile
 printlog() {
 	((QUIET)) && return
-	printf "$(date "$DATE_FMT"):%s\n" "$1" | tee -a "$LOGFILE"
+	printf '%s:%s\n' "$(date "$DATE_FMT")" "$1" | tee -a "$LOGFILE"
 } && export -f printlog
 
 # print a log to to STDERR, and append to the logfile
