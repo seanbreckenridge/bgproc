@@ -5,7 +5,7 @@
 
 declare ACTION QUIET NO_RECURSIVE
 ACTION='loop'
-QUIET=
+QUIET=0
 NO_RECURSIVE=
 
 eprintf() {
