@@ -34,13 +34,15 @@ evry 2 days -my_task && {
 ## Usage
 
 ```
-Usage: bgproc [-h] [-odpqn] [DIR...]
+Usage: bgproc [-h] [-nodpqjJ] [DIR...]
 Runs tasks in the background. Run without flags to start the background loop
-	-n		Don't search directories recursively (add -maxdepth 1)
-	-o		Runs the task loop once
-	-d		Runs the task loop once, in debug mode
-	-p		Runs the task loop thrice, to pretty print debug info
-	-q		Quiet mode, silences any logs
+	-n	Don't search directories recursively (add -maxdepth 1)
+	-o	Runs the task loop once
+	-d	Runs the task loop once, in debug mode
+	-p	Runs the task loop thrice, to pretty print debug info
+	-q	Quiet mode, silences any logs
+	-j	Print paths of all jobs, then exit
+	-J	Print paths of all job directories, then exit
 Any additional arguments should be directories which contain '.job' files
 If no directories are provided, searches from the current directory recursively
 See https://github.com/seanbreckenridge/bgproc for more info

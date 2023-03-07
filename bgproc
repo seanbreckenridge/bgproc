@@ -122,16 +122,18 @@ bgproc_loop() {
 #### PARSE FLAGS ####
 
 # handle flags and run
-while getopts 'hodqnp' opt; do
+while getopts 'hodqnpjJ' opt; do
 	case "${opt}" in
 	h)
-		printf "Usage: bgproc [-h] [-odpqn] [DIR...]\n"
+		printf "Usage: bgproc [-h] [-nodpqjJ] [DIR...]\n"
 		printf "Runs tasks in the background. Run without flags to start the background loop\n"
-		printf "	-n		Don't search directories recursively (add -maxdepth 1)\n"
-		printf "	-o		Runs the task loop once\n"
-		printf "	-d		Runs the task loop once, in debug mode\n"
-		printf "	-p		Runs the task loop thrice, to pretty print debug info\n"
-		printf "	-q		Quiet mode, silences any logs\n"
+		printf "\t-n\tDon't search directories recursively (add -maxdepth 1)\n"
+		printf "\t-o\tRuns the task loop once\n"
+		printf "\t-d\tRuns the task loop once, in debug mode\n"
+		printf "\t-p\tRuns the task loop thrice, to pretty print debug info\n"
+		printf "\t-q\tQuiet mode, silences any logs\n"
+		printf "\t-j\tPrint paths of all jobs, then exit\n"
+		printf "\t-J\tPrint paths of all job directories, then exit\n"
 		printf "Any additional arguments should be directories which contain '.job' files\n"
 		printf "If no directories are provided, searches from the current directory recursively\n"
 		printf "See https://github.com/seanbreckenridge/bgproc for more info\n"
@@ -148,6 +150,12 @@ while getopts 'hodqnp' opt; do
 		;;
 	p)
 		ACTION='pretty-debug'
+		;;
+	j)
+		ACTION='print-jobs'
+		;;
+	J)
+		ACTION='print-job-dirs'
 		;;
 	q)
 		QUIET=1
@@ -207,6 +215,16 @@ once)
 debug)
 	print_jobs
 	EVRY_DEBUG=1 loop_iteration
+	;;
+print-jobs)
+	while read -r -d $'\0' script; do
+		printf '%s\n' "${script}"
+	done < <(job_list)
+	;;
+print-job-dirs)
+	for dir in "${JOB_DIRS[@]}"; do
+		printf '%s\n' "${dir}"
+	done
 	;;
 loop)
 	bgproc_loop
