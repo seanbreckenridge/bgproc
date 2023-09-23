@@ -162,7 +162,7 @@ jobs
 
 #### Background Service
 
-This doesn't offer a way to run this automatically, thats should be handled by you. Could potentially use a `systemd` service (on linux flavors that have that) or an [Automator script](https://stackoverflow.com/questions/6442364/running-script-upon-login-mac) on macOS.
+This doesn't offer a way to run this automatically, that's should be handled by you. Could potentially use a `systemd` service (on linux flavors that have that) or an [Automator script](https://stackoverflow.com/questions/6442364/running-script-upon-login-mac) on macOS.
 
 Personally I run this with [`supervisor`](https://github.com/Supervisor/supervisor) (since it being cross platform means my background processes are platform agnostic) at the beginning of my X session on linux, and [check whenever I open a terminal on mac](https://github.com/seanbreckenridge/dotfiles/blob/master/.config/zsh/mac.zsh) - see [here](https://github.com/seanbreckenridge/dotfiles/tree/master/.local/scripts)
 
