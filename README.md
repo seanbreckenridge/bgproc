@@ -174,7 +174,7 @@ Personally I run this with [`supervisor`](https://github.com/Supervisor/supervis
 
 On [`termux`](https://termux.com/) (android), where handling background tasks is a bit more complicated, instead of running this in the background, I use the `-o` flag to run the loop [when I open my terminal](https://github.com/seanbreckenridge/dotfiles/blob/master/.config/zsh/android.zsh). In my shell profile for `termux`, I have:
 
-`evry 1 hour -run_android_jobs && bgproc_on_machine -onq -F 4`
+`evry 1 hour -run_android_jobs && bgproc_on_machine -nqF 4`
 
 Since that has `-F 4` (run 4 jobs in parallel), jobs finish quickly and I don't have to wait long for jobs to run before I can interact with the terminal.
 

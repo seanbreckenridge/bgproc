@@ -11,7 +11,7 @@ PARALLEL_JOBS=
 TEST_JOB_FILE=
 
 eprintf() {
-	((QUIET)) && return
+	[[ "${QUIET:-0}" -eq 1 ]]
 	# shellcheck disable=SC2059
 	printf "$@" 1>&2
 }
