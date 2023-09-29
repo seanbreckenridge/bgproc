@@ -34,11 +34,12 @@ evry 2 days -my_task && {
 ## Usage
 
 ```
-Usage: bgproc [-h] [-nodpqjJ] [DIR...]
+Usage: bgproc [-h] [-nodpqjJ] [-F <n>] [DIR...]
 Runs tasks in the background. Run without flags to start the background loop
 	-n	Don't search directories recursively (add -maxdepth 1)
 	-o	Runs the task loop once
 	-d	Runs the task loop once, in debug mode
+	-F <n>	Runs the task loop once, running jobs in parallel, with <n> jobs at a time
 	-p	Runs the task loop thrice, to pretty print debug info
 	-q	Quiet mode, silences any logs
 	-j	Print paths of all jobs, then exit
@@ -47,6 +48,8 @@ Any additional arguments should be directories which contain '.job' files
 If no directories are provided, searches from the current directory recursively
 See https://github.com/seanbreckenridge/bgproc for more info
 ```
+
+The `-F` option does not attempt to print/schedule jobs in order, it just forks and waits for them to finish. So, outputs from the commands may overlap
 
 See [here](https://gist.github.com/seanbreckenridge/e7ad77320c065d96f282f6d45deaa842) for example debug output.
 
