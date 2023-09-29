@@ -3,11 +3,12 @@
 # uses my evry tool to run commands periodically
 # https://github.com/seanbreckenridge/evry
 
-declare ACTION QUIET NO_RECURSIVE
+declare ACTION QUIET NO_RECURSIVE PARALLEL_JOBS TEST_JOB_FILE
 ACTION='loop'
 QUIET=0
 NO_RECURSIVE=
 PARALLEL_JOBS=
+TEST_JOB_FILE=
 
 eprintf() {
 	((QUIET)) && return
@@ -138,15 +139,16 @@ bgproc_loop() {
 #### PARSE FLAGS ####
 
 # handle flags and run
-while getopts 'hodqnpjJF:' opt; do
+while getopts 'hodqt:npjJF:' opt; do
 	case "${opt}" in
 	h)
-		printf "Usage: bgproc [-h] [-nodpqjJ] [-F <n>] [DIR...]\n"
+		printf "Usage: bgproc [-h] [-nodpqjJ] [-F <n>] [-t <f>] [DIR...]\n"
 		printf "Runs tasks in the background. Run without flags to start the background loop\n"
 		printf "\t-n\tDon't search directories recursively (add -maxdepth 1)\n"
 		printf "\t-o\tRuns the task loop once\n"
 		printf "\t-d\tRuns the task loop once, in debug mode\n"
 		printf "\t-F <n>\tRuns the task loop once, running jobs in parallel, with <n> jobs at a time\n"
+		printf "\t-t <f>\tRuns the job file <f>, can be used to test a job before adding it to your directory\n"
 		printf "\t-p\tRuns the task loop thrice, to pretty print debug info\n"
 		printf "\t-q\tQuiet mode, silences any logs\n"
 		printf "\t-j\tPrint paths of all jobs, then exit\n"
@@ -170,6 +172,14 @@ while getopts 'hodqnpjJF:' opt; do
 		;;
 	j)
 		ACTION='print-jobs'
+		;;
+	t)
+		ACTION='test-job'
+		TEST_JOB_FILE="${OPTARG}"
+		if [[ ! -r "${TEST_JOB_FILE}" ]]; then
+			eprintf "Cannot read file: %s\n" "${TEST_JOB_FILE}"
+			exit 1
+		fi
 		;;
 	J)
 		ACTION='print-job-dirs'
@@ -240,6 +250,9 @@ case "${ACTION}" in
 once)
 	print_jobs
 	loop_iteration
+	;;
+test-job)
+	bash "${TEST_JOB_FILE}" 2>&1
 	;;
 once-fork)
 	print_jobs

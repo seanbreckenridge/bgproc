@@ -34,12 +34,13 @@ evry 2 days -my_task && {
 ## Usage
 
 ```
-Usage: bgproc [-h] [-nodpqjJ] [-F <n>] [DIR...]
+Usage: bgproc [-h] [-nodpqjJ] [-F <n>] [-t <f>] [DIR...]
 Runs tasks in the background. Run without flags to start the background loop
 	-n	Don't search directories recursively (add -maxdepth 1)
 	-o	Runs the task loop once
 	-d	Runs the task loop once, in debug mode
 	-F <n>	Runs the task loop once, running jobs in parallel, with <n> jobs at a time
+	-t <f>	Runs the job file <f>, can be used to test a job before adding it to your directory
 	-p	Runs the task loop thrice, to pretty print debug info
 	-q	Quiet mode, silences any logs
 	-j	Print paths of all jobs, then exit
@@ -51,11 +52,15 @@ See https://github.com/seanbreckenridge/bgproc for more info
 
 The `-F` option does not attempt to print/schedule jobs in order, it just forks and waits for them to finish. So, outputs from the commands may overlap
 
+To test a `.job` file before adding it to your `bgproc` directory, you can use the `-t` option. For example:
+
+`EVRY_DEBUG=1 bgproc -t ./dir/something.job`
+
 See [here](https://gist.github.com/seanbreckenridge/e7ad77320c065d96f282f6d45deaa842) for example debug output.
 
-This offers a few ways to run the task loop once, `-o` (once), `-d` (with lots of debug information) or `-p`, in pretty mode, which tells you when each job will run next:
+This offers a few ways to run the task loop once, `-o` (once), `-d` (with lots of debug information), `-F <n>` to run `<n>` jobs in parallel, or `-p`, in pretty mode, which tells you when each job will run next:
 
-```bash
+```
 $ bgproc -p ~/.local/scripts/supervisor_jobs/linux
 glue-update-cubing-json - 5 days, 1 hour, 49 minutes, 47 seconds
 warn_mailsync - 9 minutes, 27 seconds
@@ -72,8 +77,6 @@ Copy the `bgproc` script onto your `$PATH` somewhere and make it executable. To 
 
 - `sinister`: `sh <(curl -sSL http://git.io/sinister) -u 'https://raw.githubusercontent.com/seanbreckenridge/bgproc/master/bgproc'`
 - [`basher`](https://github.com/basherpm/basher): `basher install seanbreckenridge/bgproc`
-
-You could alternatively clone this repository and create a 'jobs' folder (the name doesn't particularly matter), placing `.job` files in that directory. Then, just run the script like `./bgproc` while in this directory, it doesn't have to be on your `$PATH`.
 
 ### Logs
 
@@ -169,9 +172,11 @@ This doesn't offer a way to run this automatically, that's should be handled by 
 
 Personally I run this with [`supervisor`](https://github.com/Supervisor/supervisor) (since it being cross platform means my background processes are platform agnostic) at the beginning of my X session on linux, and [check whenever I open a terminal on mac](https://github.com/seanbreckenridge/dotfiles/blob/master/.config/zsh/mac.zsh) - see [here](https://github.com/seanbreckenridge/dotfiles/tree/master/.local/scripts)
 
-On [`termux`](https://termux.com/) (android), where handling background tasks is a bit more complicated, instead of running this in the background, I use the `-o` flag to run the loop once a day, [checking when I open a terminal](https://github.com/seanbreckenridge/dotfiles/blob/master/.config/zsh/android.zsh). In my shell profile, I put something like:
+On [`termux`](https://termux.com/) (android), where handling background tasks is a bit more complicated, instead of running this in the background, I use the `-o` flag to run the loop [when I open my terminal](https://github.com/seanbreckenridge/dotfiles/blob/master/.config/zsh/android.zsh). In my shell profile for `termux`, I have:
 
-`evry 1 day -run_android_jobs && bgproc -o ~/.local/scripts/supervisor_jobs`
+`evry 1 hour -run_android_jobs && bgproc_on_machine -onq -F 4`
+
+Since that has `-F 4` (run 4 jobs in parallel), jobs finish quickly and I don't have to wait long for jobs to run before I can interact with the terminal.
 
 ### Performance
 
