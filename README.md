@@ -168,15 +168,15 @@ jobs
 
 #### Background Service
 
-This doesn't offer a way to run this automatically, that's should be handled by you. Could potentially use a `systemd` service (on linux flavors that have that) or an [Automator script](https://stackoverflow.com/questions/6442364/running-script-upon-login-mac) on macOS.
+This doesn't ship way to run this automatically for each operating system. Could potentially use a `systemd` service (on linux flavors that have that) or an [Automator script](https://stackoverflow.com/questions/6442364/running-script-upon-login-mac) on macOS.
 
-Personally I run this with [`supervisor`](https://github.com/Supervisor/supervisor) (since it being cross platform means my background processes are platform agnostic) at the beginning of my X session on linux, and [check whenever I open a terminal on mac](https://github.com/seanbreckenridge/dotfiles/blob/master/.config/zsh/mac.zsh) - see [here](https://github.com/seanbreckenridge/dotfiles/tree/master/.local/scripts)
+Personally, I run this with [`supervisor`](https://github.com/Supervisor/supervisor) (since it being cross platform means my background processes are cross platform as well) at the beginning of my X session on linux, and, otherwise [checking if the pid file exists when I open a terminal](https://github.com/seanbreckenridge/dotfiles/blob/master/.local/scripts/README.md#supervisor)
 
-On [`termux`](https://termux.com/) (android), where handling background tasks is a bit more complicated, instead of running this in the background, I use the `-o` flag to run the loop [when I open my terminal](https://github.com/seanbreckenridge/dotfiles/blob/master/.config/zsh/android.zsh). In my shell profile for `termux`, I have:
+On `android` where handling background tasks is a bit more complicated, instead of using supervisor to run `bgproc` in the background, I use the `-F` flag to run the loop once [when I open my terminal](https://github.com/seanbreckenridge/dotfiles/blob/master/.config/zsh/android.zsh). In my shell profile for `termux`, I have:
 
 `evry 1 hour -run_android_jobs && bgproc_on_machine -nqF 4`
 
-Since that has `-F 4` (run 4 jobs in parallel), jobs finish quickly and I don't have to wait long for jobs to run before I can interact with the terminal.
+Since that uses `-F 4` (run 4 jobs in parallel), jobs finish relatively quickly and I don't have to wait long for jobs to run before I can interact with the terminal.
 
 ### Performance
 
