@@ -12,7 +12,7 @@ PARALLEL_JOBS=
 TEST_JOB_FILE=
 
 eprintf() {
-	[[ "${QUIET:-0}" -eq 1 ]]
+	[[ "${QUIET:-0}" == '1' ]] && return
 	# shellcheck disable=SC2059
 	printf "$@" 1>&2
 }
@@ -186,7 +186,7 @@ while getopts 'hodqt:npjJF:' opt; do
 		ACTION='test-job'
 		TEST_JOB_FILE="${OPTARG}"
 		if [[ ! -r "${TEST_JOB_FILE}" ]]; then
-			eprintf "Cannot read file: %s\n" "${TEST_JOB_FILE}"
+			printf "Cannot read file: %s\n" "${TEST_JOB_FILE}"
 			exit 1
 		fi
 		;;
@@ -197,7 +197,7 @@ while getopts 'hodqt:npjJF:' opt; do
 		RUNTYPE='parallel'
 		PARALLEL_JOBS="${OPTARG}"
 		if [[ ! "${PARALLEL_JOBS}" =~ ^[0-9]+$ ]]; then
-			eprintf "Invalid argument for to -F (not a number): %s\n" "${PARALLEL_JOBS}"
+			printf "Invalid argument for to -F (not a number): %s\n" "${PARALLEL_JOBS}"
 			exit 1
 		fi
 		;;
@@ -205,11 +205,11 @@ while getopts 'hodqt:npjJF:' opt; do
 		QUIET=1
 		;;
 	?)
-		eprintf "Run 'bgproc -h' for help\n"
+		printf "Run 'bgproc -h' for help\n"
 		exit 1
 		;;
 	*)
-		eprintf "Unexpected argument: ${opt}\n"
+		printf 'Unexpected argument: %s\n' "${opt}"
 		exit 1
 		;;
 	esac
@@ -219,6 +219,11 @@ shift $((OPTIND - 1))
 # If no additional positions were given, assume current directory
 case "${#@}" in
 0)
+	if ((NO_RECURSIVE)); then
+		eprintf "Warning: -n specified, but no directories given, searching the current directory only...\n"
+	else
+		eprintf "No directories given, searching the current directory recursively...\n"
+	fi
 	JOB_DIRS+=('.')
 	;;
 *)
