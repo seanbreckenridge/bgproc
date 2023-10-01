@@ -39,9 +39,9 @@ Runs tasks in the background. Run without flags to start the background loop
 	-n	Don't search directories recursively (add -maxdepth 1)
 	-o	Runs the task loop once
 	-d	Runs the task loop once, in debug mode
+	-p	Runs the task loop thrice, to pretty print debug info
 	-F <n>	Runs the jobs in parallel, with <n> jobs at a time
 	-t <f>	Runs the job file <f>, can be used to test a job before adding it to your directory
-	-p	Runs the task loop thrice, to pretty print debug info
 	-q	Quiet mode, silences any logs
 	-j	Print paths of all jobs, then exit
 	-J	Print paths of all job directories, then exit
