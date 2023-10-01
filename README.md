@@ -39,7 +39,7 @@ Runs tasks in the background. Run without flags to start the background loop
 	-n	Don't search directories recursively (add -maxdepth 1)
 	-o	Runs the task loop once
 	-d	Runs the task loop once, in debug mode
-	-F <n>	Runs the task loop once, running jobs in parallel, with <n> jobs at a time
+	-F <n>	Runs the jobs in parallel, with <n> jobs at a time
 	-t <f>	Runs the job file <f>, can be used to test a job before adding it to your directory
 	-p	Runs the task loop thrice, to pretty print debug info
 	-q	Quiet mode, silences any logs
@@ -174,7 +174,7 @@ Personally, I run this with [`supervisor`](https://github.com/Supervisor/supervi
 
 On `android` where handling background tasks is a bit more complicated, instead of using supervisor to run `bgproc` in the background, I use the `-F` flag to run the loop once [when I open my terminal](https://github.com/seanbreckenridge/dotfiles/blob/master/.config/zsh/android.zsh). In my shell profile for `termux`, I have:
 
-`evry 1 hour -run_android_jobs && bgproc_on_machine -nqF 4`
+`evry 1 hour -run_android_jobs && bgproc_on_machine -onqF 4`
 
 Since that uses `-F 4` (run 4 jobs in parallel), jobs finish relatively quickly and I don't have to wait long for jobs to run before I can interact with the terminal.
 
