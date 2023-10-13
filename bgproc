@@ -219,7 +219,10 @@ shift $((OPTIND - 1))
 # If no additional positions were given, assume current directory
 case "${#@}" in
 0)
-	if ((NO_RECURSIVE)); then
+	if [[ -n "${TEST_JOB_FILE}" ]]; then
+		# dont print warning if -t was specified
+		JOB_DIRS+=('.')
+	elif ((NO_RECURSIVE)); then
 		eprintf "Warning: -n specified, but no directories given, searching the current directory only...\n"
 	else
 		eprintf "No directories given, searching the current directory recursively...\n"
