@@ -122,7 +122,7 @@ When running a loop, whenever this finishes running each job and before it sleep
 
 ```bash
 # to figure out how long its been since loop last finished in seconds
-echo `date +%s` - `stat -c'%Y' ~/.cache/bgproc.lastrun` | bc
+echo "$(date +%s)" - "$(stat -c'%Y' ~/.cache/bgproc.lastrun)" | bc
 220
 ```
 
