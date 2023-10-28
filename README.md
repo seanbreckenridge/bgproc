@@ -118,6 +118,14 @@ To change the date format, you can set the `BGPROC_DATE_FMT` environment variabl
 BGPROC_DATE_FMT='+%Y-%m-%dT%H-%M-%S' ./bgproc -o ./jobs
 ```
 
+When running a loop, whenever this finishes running each job and before it sleeps, it updates the timestamp on `$BGPROC_LASTRUNFILE` (defaults to `~/.cache/bgproc.lastrun`). You can use this to check when the loop last finished, or to possibly notify you if some task is hanging your loop entirely.
+
+```bash
+# to figure out how long its been since loop last finished in seconds
+echo `date +%s` - `stat -c'%Y' ~/.cache/bgproc.lastrun` | bc
+220
+```
+
 ## bgproc_on_machine
 
 I use `bgproc` on all of my machines and my phone, so `bgproc_on_machine` handles the task of figuring out which machine I'm currently on, so the correct background `.job`s can run. That uses [`on_machine`](https://github.com/seanbreckenridge/on_machine) internally, which generates a unique hash, like: `linux_arch` or `android_termux`.

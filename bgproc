@@ -42,9 +42,11 @@ havecmd evry 'Install it with "cargo install evry"' || exit $?
 # if TMPDIR environment variable is set, use that
 # set on android/termux
 declare -rx TEMP_DIR="${TMPDIR:-/tmp}"
+declare -rx CACHE_DIR="${XDG_CACHE_HOME:-${HOME}/.cache}"
 
 declare -rx LOCKFILE="${BGPROC_LOCKFILE:-${TEMP_DIR}/bgproc.lock}"
 declare -rx LOGFILE="${BGPROC_LOGFILE:-${TEMP_DIR}/bgproc.log}"
+declare -rx LASTRUNFILE="${BGPROC_LASTRUNFILE:-${CACHE_DIR}/bgproc.lastrun}"
 declare -rx SLEEP_TIME="${BGPROC_SLEEPTIME:-60}"
 
 ##### OUT/ERR LOGGING FUNCTIONS #####
@@ -141,6 +143,7 @@ bgproc_loop() {
 	printlog "Starting loop..."
 	while true; do
 		loop_iteration
+		touch "${LASTRUNFILE}"
 		sleep "${SLEEP_TIME}"
 	done
 }
@@ -244,6 +247,7 @@ check_lockfile() {
 	# exit if lock file already exists
 	if [[ -e "${LOCKFILE}" ]]; then
 		send-error "Lockfile at ${LOCKFILE} already exists, exiting..."
+		eprintf "If you want to run another loop, set the BGPROC_LOCKFILE environment variable to a different path\n"
 		exit 1
 	fi
 }
