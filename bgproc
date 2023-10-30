@@ -123,16 +123,16 @@ loop_serial() {
 }
 
 loop_fork() {
-	local runnning_jobs=0
+	local running_jobs=0
 	while read -r -d $'\0' script; do
 		# if we're running the max number of jobs, wait for one to finish
-		while [[ "${runnning_jobs}" -ge "${PARALLEL_JOBS}" ]]; do
+		while [[ "${running_jobs}" -ge "${PARALLEL_JOBS}" ]]; do
 			wait -n # wait for the next job to finish
-			((runnning_jobs--))
+			((running_jobs--))
 		done
 		# run the job in the background
 		bash "${script}" 2>&1 &
-		((runnning_jobs++))
+		((running_jobs++))
 	done < <(job_list)
 	wait # wait for all jobs to finish
 }
